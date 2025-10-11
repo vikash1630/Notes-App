@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+
+body {
+  @apply bg-gray-900 text-amber-50 m-4;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
