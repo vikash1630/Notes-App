@@ -1,195 +1,142 @@
-import React, { useRef, useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { NotesContext } from "./components/Contexts/NotesContext";
 
 const Mainbar = () => {
-    const [collapse, setCollapse] = useState(false);
-    const { notes, deleteNote, togglePin, toggleArchive } = useContext(NotesContext);
-    const refs = {
-        all: useRef(),
-        pinned: useRef(),
-        archived: useRef(),
-        work: useRef(),
-        personal: useRef(),
-        ideas: useRef(),
-    };
+  const { notes, deleteNote, togglePin, toggleArchive } = useContext(NotesContext);
 
-    const removeHighlights = () => {
-        Object.values(refs).forEach((ref) =>
-            ref.current?.classList.remove("bg-zinc-600", "text-amber-400")
-        );
-    };
+  // Mobile dropdown state
+  const [showMenu, setShowMenu] = useState(false);
 
-    const handleClick = (ref) => {
-        removeHighlights();
-        ref.current.classList.add("bg-zinc-600", "text-amber-400");
-    };
+  return (
+    <div className="mt-4 w-full">
 
-    return (
-        <div className="mt-6 w-full">
-            <div className="flex gap-4 md:gap-6 w-full">
+      {/* ---------------- NAVBAR ALREADY ABOVE ---------------- */}
 
-                {/* Sidebar (full for desktop, collapsible + auto collapsed on mobile) */}
-                {!collapse ? (
-                    <nav className="hidden md:flex h-[85vh] w-64 bg-gradient-to-br from-zinc-900 to-zinc-800 text-white p-6 rounded-3xl shadow-2xl flex-col justify-between border border-zinc-700">
-                        
-                        {/* All Notes + Pinned + Archived */}
-                        <div className="flex flex-col gap-3">
-                            <h1
-                                ref={refs.all}
-                                onClick={() => handleClick(refs.all)}
-                                className="cursor-pointer text-center rounded-lg px-4 py-3 text-xl font-semibold hover:bg-zinc-700 bg-zinc-600 transition-all"
-                            >
-                                🗂️ All Notes
-                            </h1>
+      {/* ---------------- MOBILE MORE FEATURES ROW ---------------- */}
+      <div className="md:hidden flex items-center gap-3 px-4 mt-4">
 
-                            <NavLink
-                                to="/Pinned"
-                                ref={refs.pinned}
-                                onClick={() => handleClick(refs.pinned)}
-                                className={({ isActive }) =>
-                                    `text-center px-4 py-3 rounded-lg text-xl cursor-pointer hover:bg-zinc-700 transition-all ${
-                                        isActive ? "bg-zinc-600 text-amber-400" : ""
-                                    }`
-                                }
-                            >
-                                📌 Pinned
-                            </NavLink>
-
-                            <NavLink
-                                to="/Archived"
-                                ref={refs.archived}
-                                onClick={() => handleClick(refs.archived)}
-                                className={({ isActive }) =>
-                                    `text-center px-4 py-3 rounded-lg text-xl cursor-pointer hover:bg-zinc-700 transition-all ${
-                                        isActive ? "bg-zinc-600 text-amber-400" : ""
-                                    }`
-                                }
-                            >
-                                🗄️ Archived
-                            </NavLink>
-                        </div>
-
-                        {/* Tags */}
-                        <div className="flex flex-col gap-3">
-                            <h2 className="font-semibold text-center text-lg text-amber-400">🏷️ Tags</h2>
-
-                            <span
-                                ref={refs.work}
-                                onClick={() => handleClick(refs.work)}
-                                className="cursor-pointer text-center hover:bg-zinc-700 rounded-md text-base px-3 py-2 transition-all"
-                            >
-                                Work
-                            </span>
-                            <span
-                                ref={refs.personal}
-                                onClick={() => handleClick(refs.personal)}
-                                className="cursor-pointer text-center hover:bg-zinc-700 rounded-md text-base px-3 py-2 transition-all"
-                            >
-                                Personal
-                            </span>
-                            <span
-                                ref={refs.ideas}
-                                onClick={() => handleClick(refs.ideas)}
-                                className="cursor-pointer text-center hover:bg-zinc-700 rounded-md text-base px-3 py-2 transition-all"
-                            >
-                                Ideas
-                            </span>
-                        </div>
-
-                        <button
-                            onClick={() => setCollapse(true)}
-                            className="mt-4 bg-amber-600 hover:bg-amber-500 text-white py-2 px-4 rounded-lg text-base flex items-center justify-center shadow-md"
-                        >
-                            ⬅️ Collapse
-                        </button>
-                    </nav>
-                ) : (
-                    <nav className="hidden md:flex h-[85vh] w-20 bg-zinc-800 rounded-3xl items-center justify-center shadow-xl border border-zinc-700">
-                        <button
-                            onClick={() => setCollapse(false)}
-                            className="rotate-180 text-white text-3xl hover:text-amber-400 transition-all"
-                            title="Expand"
-                        >
-                            ➡️
-                        </button>
-                    </nav>
-                )}
-
-                {/* Mobile Sidebar Button */}
-                <div className="md:hidden flex justify-between w-full px-4">
-                    <button
-                        onClick={() => setCollapse((prev) => !prev)}
-                        className="text-white text-3xl hover:text-amber-400 transition-all"
-                    >
-                        {collapse ? "📂" : "📁"}
-                    </button>
-                </div>
-
-                {/* Main Content (FULL WIDTH RESPONSIVE) */}
-                <div className="main flex-1 min-w-0">
-                    <nav className="h-[85vh] w-full bg-gradient-to-br from-zinc-900 to-zinc-800 text-white p-6 rounded-3xl shadow-2xl overflow-y-auto border border-zinc-700">
-
-                        <div className="cards grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-
-                            {/* Add Note Button */}
-                            <NavLink
-                                to="/NewFile"
-                                className="flex items-center justify-center border-2 border-dashed border-amber-500 h-64 rounded-2xl bg-zinc-700 hover:bg-zinc-600 shadow-lg hover:shadow-2xl transition-all"
-                            >
-                                <div className="h-20 w-20 flex items-center justify-center border-2 border-dashed border-amber-400 rounded-full text-5xl font-bold text-amber-400 hover:scale-110 transition-transform">
-                                    +
-                                </div>
-                            </NavLink>
-
-                            {/* Notes */}
-                            {notes.length > 0 ? (
-                                notes.map((note, idx) => (
-                                    <div
-                                        key={note.id}
-                                        className="flex flex-col justify-between h-64 p-5 bg-gradient-to-br from-zinc-800 to-zinc-700 text-white rounded-2xl border border-amber-500 shadow-xl hover:shadow-2xl transition-all hover:scale-[1.03]"
-                                    >
-                                        <div>
-                                            <h1 className="text-lg font-bold opacity-70">#{idx + 1}</h1>
-                                            <h1 className="text-2xl font-bold truncate mt-2">
-                                                {note.title}
-                                            </h1>
-                                            <h2 className="text-base text-gray-300 mt-3">📅 {note.date}</h2>
-                                        </div>
-
-                                        <div className="flex gap-2 mt-4">
-                                            <button
-                                                onClick={() => deleteNote(note.id)}
-                                                className="flex-1 px-3 py-2 border border-red-500 rounded-md text-red-400 hover:bg-red-500 hover:text-white transition-all"
-                                            >
-                                                Delete
-                                            </button>
-                                            <button
-                                                onClick={() => toggleArchive(note.id)}
-                                                className="flex-1 px-3 py-2 border border-purple-500 rounded-md text-purple-300 hover:bg-purple-500 hover:text-white transition-all"
-                                            >
-                                                {note.archived ? "Unarchive" : "Archive"}
-                                            </button>
-                                            <button
-                                                onClick={() => togglePin(note.id)}
-                                                className="flex-1 px-3 py-2 border border-green-500 rounded-md text-green-300 hover:bg-green-500 hover:text-white transition-all"
-                                            >
-                                                {note.pin ? "Unpin" : "Pin"}
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <h1 className="text-white text-xl">No notes saved</h1>
-                            )}
-
-                        </div>
-
-                    </nav>
-                </div>
-            </div>
+        {/* HORIZONTAL LINES (≡) */}
+        <div
+          className="cursor-pointer"
+          onClick={() => setShowMenu(!showMenu)}
+        >
+          <div className="w-8 h-1 bg-white mb-1 rounded"></div>
+          <div className="w-8 h-1 bg-white mb-1 rounded"></div>
+          <div className="w-8 h-1 bg-white rounded"></div>
         </div>
-    );
+
+        <h1 className="text-white text-lg font-semibold">
+          More Features
+        </h1>
+      </div>
+
+      {/* ---------------- MOBILE DROPDOWN MENU ---------------- */}
+      {showMenu && (
+        <div className="md:hidden bg-zinc-800 text-white border border-zinc-600 rounded-xl mt-3 mx-4 p-4">
+
+          <NavLink to="/" className="block py-2 border-b border-zinc-700">
+            🗂️ All Notes
+          </NavLink>
+
+          <NavLink to="/Pinned" className="block py-2 border-b border-zinc-700">
+            📌 Pinned
+          </NavLink>
+
+          <NavLink to="/Archived" className="block py-2 border-b border-zinc-700">
+            🗄️ Archived
+          </NavLink>
+
+          <h2 className="mt-3 mb-2 text-amber-400 font-semibold">🏷 Tags</h2>
+
+          <div className="ml-2 space-y-2">
+            <span className="block">• Work</span>
+            <span className="block">• Personal</span>
+            <span className="block">• Ideas</span>
+          </div>
+        </div>
+      )}
+
+      <div className="flex gap-4 w-full mt-4">
+
+        {/* ---------------- DESKTOP SIDEBAR ---------------- */}
+        <aside className="hidden md:flex flex-col justify-between h-[85vh] w-64 bg-zinc-800 text-white p-6 rounded-3xl shadow-lg border border-zinc-700">
+
+          <div className="flex flex-col gap-3">
+            <NavLink to="/" className="text-center bg-zinc-600 px-4 py-3 rounded-lg text-xl hover:bg-zinc-700">
+              🗂️ All Notes
+            </NavLink>
+
+            <NavLink to="/Pinned" className="text-center px-4 py-3 rounded-lg text-xl hover:bg-zinc-700">
+              📌 Pinned
+            </NavLink>
+
+            <NavLink to="/Archived" className="text-center px-4 py-3 rounded-lg text-xl hover:bg-zinc-700">
+              🗄️ Archived
+            </NavLink>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <h2 className="text-center text-amber-400 text-lg">🏷 Tags</h2>
+            <span className="px-3 py-2 rounded-md bg-zinc-700 text-center">Work</span>
+            <span className="px-3 py-2 rounded-md bg-zinc-700 text-center">Personal</span>
+            <span className="px-3 py-2 rounded-md bg-zinc-700 text-center">Ideas</span>
+          </div>
+        </aside>
+
+        {/* ---------------- MAIN CONTENT AREA ---------------- */}
+        <main className="flex-1">
+          <div className="h-[85vh] w-full bg-zinc-800 text-white p-6 rounded-3xl shadow-lg border border-zinc-700 overflow-y-auto">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+
+              {/* Add Note Button */}
+              <NavLink
+                to="/NewFile"
+                className="flex items-center justify-center border-2 border-dashed border-amber-500 h-64 rounded-2xl bg-zinc-700 hover:bg-zinc-600"
+              >
+                <div className="h-20 w-20 flex items-center justify-center border-2 border-dashed border-amber-400 rounded-full text-5xl font-bold text-amber-400">
+                  +
+                </div>
+              </NavLink>
+
+              {/* Notes */}
+              {notes.length > 0 ? (
+                notes.map((note, idx) => (
+                  <div
+                    key={note.id}
+                    className="p-5 h-64 bg-zinc-700 rounded-2xl border border-amber-500 shadow-lg"
+                  >
+                    <h1 className="text-lg opacity-70">#{idx + 1}</h1>
+                    <h1 className="text-2xl font-bold truncate mt-1">{note.title}</h1>
+                    <h2 className="text-gray-300 text-sm mt-2">📅 {note.date}</h2>
+
+                    <div className="flex gap-2 mt-6">
+                      <button onClick={() => deleteNote(note.id)} className="flex-1 py-2 border border-red-500 rounded-md text-red-400 hover:bg-red-500 hover:text-white">
+                        Delete
+                      </button>
+
+                      <button onClick={() => toggleArchive(note.id)} className="flex-1 py-2 border border-purple-500 rounded-md text-purple-300 hover:bg-purple-500 hover:text-white">
+                        {note.archived ? "Unarchive" : "Archive"}
+                      </button>
+
+                      <button onClick={() => togglePin(note.id)} className="flex-1 py-2 border border-green-500 rounded-md text-green-300 hover:bg-green-500 hover:text-white">
+                        {note.pin ? "Unpin" : "Pin"}
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <h1 className="text-xl">No notes saved</h1>
+              )}
+
+            </div>
+          </div>
+        </main>
+
+      </div>
+    </div>
+  );
 };
 
 export default Mainbar;
