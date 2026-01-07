@@ -1,125 +1,188 @@
 import React, { useRef, useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
-import NotesProvider, { NotesContext } from "./components/Contexts/NotesContext";
+import { NotesContext } from "./components/Contexts/NotesContext";
 
 const Mainbar = () => {
     const [collapse, setCollapse] = useState(false);
     const { notes, deleteNote, togglePin, toggleArchive } = useContext(NotesContext);
-    const [Notes, setNotes] = useState([]);
-    const allNotesRef = useRef();
-    const pinnedRef = useRef();
-    const archivedRef = useRef();
-    const workRef = useRef();
-    const PersonalRef = useRef();
-    const ideaRef = useRef();
-    let i = 1;
+    const refs = {
+        all: useRef(),
+        pinned: useRef(),
+        archived: useRef(),
+        work: useRef(),
+        personal: useRef(),
+        ideas: useRef(),
+    };
 
     const removeHighlights = () => {
-        allNotesRef.current?.classList.remove("bg-zinc-600");
-        pinnedRef.current?.classList.remove("bg-zinc-600");
-        archivedRef.current?.classList.remove("bg-zinc-600");
-        workRef.current?.classList.remove("bg-zinc-600");
-        PersonalRef.current?.classList.remove("bg-zinc-600");
-        ideaRef.current?.classList.remove("bg-zinc-600");
+        Object.values(refs).forEach((ref) =>
+            ref.current?.classList.remove("bg-zinc-600", "text-amber-400")
+        );
     };
 
-    const handleClick = (itemRef) => {
+    const handleClick = (ref) => {
         removeHighlights();
-        itemRef.current.classList.add("bg-zinc-600");
+        ref.current.classList.add("bg-zinc-600", "text-amber-400");
     };
-
 
     return (
-        <div className="mt-6">
-            <div className="flex gap-6">
-                {/* Sidebar */}
+        <div className="mt-6 w-full">
+            <div className="flex gap-4 md:gap-6 w-full">
+
+                {/* Sidebar (full for desktop, collapsible + auto collapsed on mobile) */}
                 {!collapse ? (
-                    <nav className="h-[85vh] w-64 bg-gradient-to-b from-zinc-800 to-zinc-700 text-white p-6 flex flex-col justify-start rounded-3xl shadow-lg">
-                        <div className="flex flex-col gap-4 mb-8">
-                            <h1 ref={allNotesRef} onClick={() => handleClick(allNotesRef)} className="cursor-pointer self-center rounded-md px-4 py-2 hover:bg-zinc-500 bg-zinc-600 transition-colors duration-300 text-xl">
+                    <nav className="hidden md:flex h-[85vh] w-64 bg-gradient-to-br from-zinc-900 to-zinc-800 text-white p-6 rounded-3xl shadow-2xl flex-col justify-between border border-zinc-700">
+                        
+                        {/* All Notes + Pinned + Archived */}
+                        <div className="flex flex-col gap-3">
+                            <h1
+                                ref={refs.all}
+                                onClick={() => handleClick(refs.all)}
+                                className="cursor-pointer text-center rounded-lg px-4 py-3 text-xl font-semibold hover:bg-zinc-700 bg-zinc-600 transition-all"
+                            >
                                 🗂️ All Notes
                             </h1>
 
-                                <NavLink
-                                    to="/Pinned"
-                                    className={({ isActive }) =>
-                                        `self-center px-4 py-2 rounded-md text-xl cursor-pointer hover:bg-zinc-500 transition-colors duration-300 ${isActive ? "bg-zinc-600" : ""}`
-                                    }
-                                    ref={pinnedRef}
-                                    onClick={() => handleClick(pinnedRef)}
-                                >
-                                    📌 Pinned
-                                </NavLink>
-                                
-                                <NavLink
-                                    to="/Archived"
-                                    className={({ isActive }) =>
-                                        `self-center px-4 py-2 rounded-md text-xl cursor-pointer hover:bg-zinc-500 transition-colors duration-300 ${isActive ? "bg-zinc-600" : ""}`
-                                    }
-                                    ref={pinnedRef}
-                                    onClick={() => handleClick(pinnedRef)}
-                                >
-                                    🗄️ Archived
-                                </NavLink>
+                            <NavLink
+                                to="/Pinned"
+                                ref={refs.pinned}
+                                onClick={() => handleClick(refs.pinned)}
+                                className={({ isActive }) =>
+                                    `text-center px-4 py-3 rounded-lg text-xl cursor-pointer hover:bg-zinc-700 transition-all ${
+                                        isActive ? "bg-zinc-600 text-amber-400" : ""
+                                    }`
+                                }
+                            >
+                                📌 Pinned
+                            </NavLink>
+
+                            <NavLink
+                                to="/Archived"
+                                ref={refs.archived}
+                                onClick={() => handleClick(refs.archived)}
+                                className={({ isActive }) =>
+                                    `text-center px-4 py-3 rounded-lg text-xl cursor-pointer hover:bg-zinc-700 transition-all ${
+                                        isActive ? "bg-zinc-600 text-amber-400" : ""
+                                    }`
+                                }
+                            >
+                                🗄️ Archived
+                            </NavLink>
                         </div>
 
-                        <div className="flex flex-col gap-3 mt-auto">
-                            <h2 className="font-semibold mb-3 text-center text-lg">🏷️ Tags</h2>
-                            <span ref={workRef} onClick={() => handleClick(workRef)} className="cursor-pointer hover:bg-zinc-600 rounded-md text-base self-center px-3 py-2">Work</span>
-                            <span ref={PersonalRef} onClick={() => handleClick(PersonalRef)} className="cursor-pointer hover:bg-zinc-600 rounded-md text-base self-center px-3 py-2">Personal</span>
-                            <span ref={ideaRef} onClick={() => handleClick(ideaRef)} className="cursor-pointer hover:bg-zinc-600 rounded-md text-base self-center px-3 py-2">Ideas</span>
+                        {/* Tags */}
+                        <div className="flex flex-col gap-3">
+                            <h2 className="font-semibold text-center text-lg text-amber-400">🏷️ Tags</h2>
+
+                            <span
+                                ref={refs.work}
+                                onClick={() => handleClick(refs.work)}
+                                className="cursor-pointer text-center hover:bg-zinc-700 rounded-md text-base px-3 py-2 transition-all"
+                            >
+                                Work
+                            </span>
+                            <span
+                                ref={refs.personal}
+                                onClick={() => handleClick(refs.personal)}
+                                className="cursor-pointer text-center hover:bg-zinc-700 rounded-md text-base px-3 py-2 transition-all"
+                            >
+                                Personal
+                            </span>
+                            <span
+                                ref={refs.ideas}
+                                onClick={() => handleClick(refs.ideas)}
+                                className="cursor-pointer text-center hover:bg-zinc-700 rounded-md text-base px-3 py-2 transition-all"
+                            >
+                                Ideas
+                            </span>
                         </div>
 
-                        <button onClick={() => setCollapse(true)} className="mt-6 bg-amber-600 hover:bg-amber-500 text-white py-2 px-4 rounded-lg text-base self-center transition-colors duration-300">⬅️ Collapse</button>
+                        <button
+                            onClick={() => setCollapse(true)}
+                            className="mt-4 bg-amber-600 hover:bg-amber-500 text-white py-2 px-4 rounded-lg text-base flex items-center justify-center shadow-md"
+                        >
+                            ⬅️ Collapse
+                        </button>
                     </nav>
                 ) : (
-                    <nav className="h-[85vh] w-20 bg-zinc-700 rounded-3xl flex flex-col items-center justify-center text-white shadow-lg">
-                        <button onClick={() => setCollapse(false)} className="rotate-180 text-white text-2xl hover:text-amber-400 transition-colors duration-300" title="Expand">➡️</button>
+                    <nav className="hidden md:flex h-[85vh] w-20 bg-zinc-800 rounded-3xl items-center justify-center shadow-xl border border-zinc-700">
+                        <button
+                            onClick={() => setCollapse(false)}
+                            className="rotate-180 text-white text-3xl hover:text-amber-400 transition-all"
+                            title="Expand"
+                        >
+                            ➡️
+                        </button>
                     </nav>
                 )}
 
-                {/* Main Content */}
-                <div className="main flex-1">
-                    <nav className="h-[85vh] w-306 bg-gradient-to-b from-zinc-800 to-zinc-700 text-white p-6 flex flex-col justify-start rounded-3xl overflow-y-auto shadow-lg">
+                {/* Mobile Sidebar Button */}
+                <div className="md:hidden flex justify-between w-full px-4">
+                    <button
+                        onClick={() => setCollapse((prev) => !prev)}
+                        className="text-white text-3xl hover:text-amber-400 transition-all"
+                    >
+                        {collapse ? "📂" : "📁"}
+                    </button>
+                </div>
 
-                        {/* Cards Container */}
-                        <div className="cards flex flex-wrap ml-4 gap-6 justify-start">
-                            {/* New Note Button */}
-                            <div className="add h-70 w-95 flex items-center justify-center border-2 border-dotted border-amber-500 rounded-2xl shadow-md hover:shadow-xl transition-transform duration-300 transform hover:scale-105 cursor-pointer bg-gradient-to-br from-zinc-700 to-zinc-600">
-                                <NavLink to={"/NewFile"}>
-                                    <div className="h-24 w-24 flex items-center justify-center border-2 border-dotted border-amber-400 rounded-full text-5xl font-bold text-amber-400 hover:scale-110 transition-transform duration-300">
-                                        +
-                                    </div>
-                                </NavLink>
-                            </div>
+                {/* Main Content (FULL WIDTH RESPONSIVE) */}
+                <div className="main flex-1 min-w-0">
+                    <nav className="h-[85vh] w-full bg-gradient-to-br from-zinc-900 to-zinc-800 text-white p-6 rounded-3xl shadow-2xl overflow-y-auto border border-zinc-700">
+
+                        <div className="cards grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+
+                            {/* Add Note Button */}
+                            <NavLink
+                                to="/NewFile"
+                                className="flex items-center justify-center border-2 border-dashed border-amber-500 h-64 rounded-2xl bg-zinc-700 hover:bg-zinc-600 shadow-lg hover:shadow-2xl transition-all"
+                            >
+                                <div className="h-20 w-20 flex items-center justify-center border-2 border-dashed border-amber-400 rounded-full text-5xl font-bold text-amber-400 hover:scale-110 transition-transform">
+                                    +
+                                </div>
+                            </NavLink>
 
                             {/* Notes */}
                             {notes.length > 0 ? (
-                                notes.map((note) => (
-                                    <div key={note.id} className="flex flex-col justify-between h-70 w-90 p-6 bg-gradient-to-br from-zinc-700 to-zinc-600 text-white rounded-2xl border-2 border-amber-500 shadow-md hover:shadow-xl transition-transform duration-300 transform hover:scale-105 cursor-pointer">
-                                        <h1 className="text-2xl font-bold">{i++}</h1>
-                                        <h1 className="text-3xl font-bold truncate">Title: {note.title}</h1>
-                                        <h2 className="text-xl text-gray-300 mt-3">Date: {note.date}</h2>
+                                notes.map((note, idx) => (
+                                    <div
+                                        key={note.id}
+                                        className="flex flex-col justify-between h-64 p-5 bg-gradient-to-br from-zinc-800 to-zinc-700 text-white rounded-2xl border border-amber-500 shadow-xl hover:shadow-2xl transition-all hover:scale-[1.03]"
+                                    >
+                                        <div>
+                                            <h1 className="text-lg font-bold opacity-70">#{idx + 1}</h1>
+                                            <h1 className="text-2xl font-bold truncate mt-2">
+                                                {note.title}
+                                            </h1>
+                                            <h2 className="text-base text-gray-300 mt-3">📅 {note.date}</h2>
+                                        </div>
 
-                                        {/* Buttons Container */}
-                                        <div className="flex flex-wrap gap-4 mt-6">
-                                            <button onClick={() => deleteNote(note.id)} className="flex-1 px-4 py-3 border border-red-500 rounded-md text-lg font-medium text-red-500 hover:bg-red-500 hover:text-white transition-colors duration-300">
+                                        <div className="flex gap-2 mt-4">
+                                            <button
+                                                onClick={() => deleteNote(note.id)}
+                                                className="flex-1 px-3 py-2 border border-red-500 rounded-md text-red-400 hover:bg-red-500 hover:text-white transition-all"
+                                            >
                                                 Delete
                                             </button>
-
-                                            <button onClick={() => toggleArchive(note.id)} className="flex-1 px-4 py-3 border border-purple-500 rounded-md text-lg font-medium text-white hover:bg-purple-500 hover:text-white transition-colors duration-300">
+                                            <button
+                                                onClick={() => toggleArchive(note.id)}
+                                                className="flex-1 px-3 py-2 border border-purple-500 rounded-md text-purple-300 hover:bg-purple-500 hover:text-white transition-all"
+                                            >
                                                 {note.archived ? "Unarchive" : "Archive"}
                                             </button>
-
-                                            <button onClick={() => togglePin(note.id)} className="flex-1 px-4 py-3 border border-green-500 rounded-md text-lg font-medium text-white hover:bg-green-500 hover:text-white transition-colors duration-300">
+                                            <button
+                                                onClick={() => togglePin(note.id)}
+                                                className="flex-1 px-3 py-2 border border-green-500 rounded-md text-green-300 hover:bg-green-500 hover:text-white transition-all"
+                                            >
                                                 {note.pin ? "Unpin" : "Pin"}
                                             </button>
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <h1 className="text-white text-3xl mt-6">No notes Saved</h1>
+                                <h1 className="text-white text-xl">No notes saved</h1>
                             )}
+
                         </div>
 
                     </nav>

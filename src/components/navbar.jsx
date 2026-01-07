@@ -1,28 +1,51 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React from "react";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
-  const activeClass = "underline text-white cursor-pointer";
-  const normalClass = "text-white cursor-pointer hover:text-gray-300";
+  const baseClass =
+    "cursor-pointer text-white font-medium transition-all duration-300";
+  const activeClass =
+    "text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400 font-semibold scale-110";
+  const normalClass =
+    "hover:text-blue-300 hover:scale-105 opacity-90";
 
   return (
-    <nav className="bg-blue-950 rounded-md p-4">
+    <nav className="backdrop-blur-lg bg-white/10 border border-white/20 shadow-lg 
+                    rounded-2xl px-6 py-4 sticky top-0 z-50">
       <div className="flex justify-between items-center">
-        <div className="flex gap-8">
-          <NavLink to="/" className={({ isActive }) => isActive ? activeClass : normalClass}>
+
+        {/* LEFT SIDE */}
+        <div className="flex gap-10 items-center text-lg">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `${baseClass} ${isActive ? activeClass : normalClass}`
+            }
+          >
             🏠 Home
           </NavLink>
-          
         </div>
-        <div className="flex gap-8">
-          <NavLink to="/NewFile" className={({ isActive }) => isActive ? activeClass : normalClass}>
+
+        {/* RIGHT SIDE */}
+        <div className="flex gap-10 items-center text-lg">
+          
+          <NavLink
+            to="/NewFile"
+            className={({ isActive }) =>
+              `${baseClass} ${isActive ? activeClass : normalClass}`
+            }
+          >
             📝 New Note
           </NavLink>
-          
-          <NavLink to="/contact" className={({ isActive }) => isActive ? activeClass : normalClass}>
+
+          <NavLink
+            to="/contact"
+            className={({ isActive }) =>
+              `${baseClass} ${isActive ? activeClass : normalClass}`
+            }
+          >
             📞 Contact Us
           </NavLink>
-          <h1 className={normalClass}>🚪 Sign Out</h1>
         </div>
       </div>
     </nav>
